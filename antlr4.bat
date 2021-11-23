@@ -1,1 +1,1 @@
-java org.antlr.v4.Tool %*
+@java org.antlr.v4.Tool %1\%2.g4 -o %1\parser
