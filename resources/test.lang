@@ -1,0 +1,43 @@
+int a = 2;
+float b = 3;
+if a > b and true {
+    debug "a is bigger than {a * 2}";
+}
+elif b < a {
+    print b;
+}
+else {
+    x = 2;
+}
+
+while true{
+    debug "in a loop";
+    break;
+}
+
+for (int i in 1::2) debug i;
+
+for (int i in items) print item;
+
+string s = "Who digs holes under whom";
+//debug s[2:3];
+
+//if not a == 2 or false {
+//    int a, b = 3, 4
+//   a, b = b, a;
+//}
+
+//int[] a = [1,2,3]
+//debug a[2..5]
+
+// one line comment
+///*
+//   multiline comment
+//*/
+
+int fun1 = (int a, int b) -> a + b;
+int fun2 = (int a, int b) -> {
+    a = 23 + b;
+}
+
+

@@ -2,81 +2,179 @@ grammar Lang;
 
 @header {
 package me.miak.parser;
-import java.util.HashMap;
 }
 
-@members {
-/** Map variable name to Integer object holding value */
-HashMap<Integer, Integer> memory = new HashMap();
-}
+parse
+ : block EOF
+ ;
 
-prog :   (line? (EOL | EOE))*;
-                
-line
-    :  expr
-    |  declaration
-    |  assignment
-    |  whileLoop
-    ;
+block
+ : stat*
+ ;
 
-expr returns [int value]
-    : e=parenthesizedExpr {$value = $e.value;}
-    | f=boolExpr {$value = $f.value;}
-    | g=arithmeticExpr {$value = $g.value;}
-    ;
+stat
+ : assignment
+ | macro
+ | funDefinition
+ | declaration
+ | declarationWithAssignment
+ | ifStat
+ | outStat
+ | whileStat
+ | forStat
+ | BREAK SCOL
+ | OTHER {System.err.println("unknown char: " + $OTHER.text);}
+ ;
 
-declaration : TYPE ID (EQ expr)?;
+funDefinition: TYPE ID ASSIGN OPAR funArgs? CPAR ARROW (statBlock | expr SCOL);
 
-assignment : ID EQ expr;
+funArgs
+ : TYPE ID
+ | TYPE ID (COMMA TYPE ID)*
+ ;
 
-parenthesizedExpr returns [int value]
-    : '(' e=expr ')' {$value = $e.value;}
-    ;
+iterable : ID | range;
 
-whileLoop : 'while' '(' boolExpr ')' '{' prog '}';
+outStat: comm=(DEBUG | PRINT) expr SCOL;
 
-boolExpr returns [int value]
-     : e=arithmeticExpr {$value = $e.value;}
-     ( EQQ e=arithmeticExpr {$value = $value == $e.value ? 1 : 0;}
-     | NEQ e=arithmeticExpr {$value = $value != $e.value ? 1 : 0;}
-     )
-     ;
+macro: HASH ID;
 
-arithmeticExpr returns [int value]
-    :   e=multExpr {$value = $e.value;}
-       (   '+' e=multExpr {$value += $e.value;}
-       |   '-' e=multExpr {$value -= $e.value;}
-       )*
-    ;
+assignment
+ : ID ASSIGN expr SCOL
+ ;
 
-multExpr returns [int value]
-    :   e=atom {$value = $e.value;} ('*' e=atom {$value *= $e.value;})*
-    ;
+declaration
+ : TYPE ID SCOL
+ ;
 
-atom returns [int value]
-    :   INT {$value = Integer.parseInt($INT.text);}
-    |   ID
-    |   e=parenthesizedExpr {$value = $e.value;}
-    ;
+declarationWithAssignment
+ : TYPE ID ASSIGN expr SCOL
+ ;
 
-TYPE : 'int' | 'float' | 'string';
-INT :   DIGIT+ ;
-ID  :   LETTER+ (DIGIT | LETTER)* ;
-EOL :   '\r'? '\n' ;
-WS  :   (' '|'\t') -> skip;
-EOE : ';';
-TRUE: 'true';
-FALSE: 'false';
+ifStat
+ : IF conditionBlock (ELIF conditionBlock)* (ELSE statBlock)?
+ ;
 
-EQ : '=';
-EQQ : '==';
+conditionBlock
+ : expr statBlock
+ ;
+
+statBlock
+ : OBRACE block CBRACE
+ | stat
+ ;
+
+whileStat
+ : WHILE expr statBlock
+ ;
+
+forStat
+ : FOR OPAR TYPE ID IN iterable CPAR statBlock
+ ;
+
+expr
+ :<assoc=right> expr POW expr           #powExpr
+ | MINUS expr                           #unaryMinusExpr
+ | NOT expr                             #notExpr
+ | expr op=(MULT | DIV | MOD) expr      #multiplicationExpr
+ | expr op=(PLUS | MINUS) expr          #additiveExpr
+ | expr op=(LTEQ | GTEQ | LT | GT) expr #relationalExpr
+ | expr op=(EQ | NEQ) expr              #equalityExpr
+ | expr AND expr                        #andExpr
+ | expr OR expr                         #orExpr
+ | OPAR expr CPAR                       #parExpr
+ | expr OSQR index CSQR                 #indexedExpr
+ | atom                                 #atomExpr
+ ;
+
+index
+ : expr     #indexSingle
+ | range    #indexRange
+ ;
+
+range : expr THROUGH expr;
+
+atom
+ : (INT | FLOAT)                #numberAtom
+ | (TRUE | FALSE)               #booleanAtom
+ | ID                           #idAtom
+ | STRING                       #stringAtom
+ | NIL                          #nilAtom
+ ;
+
+TYPE: ('int' | 'float' | 'string');
+OR : 'or';
+AND : 'and';
+EQ : '==';
 NEQ : '!=';
+GT : '>';
+LT : '<';
+GTEQ : '>=';
+LTEQ : '<=';
+PLUS : '+';
+MINUS : '-';
+MULT : '*';
+DIV : '/';
+MOD : '%';
+POW : '^';
+NOT : 'not';
+HASH: '#';
 
-fragment
-LETTER: ('a'..'z'|'A'..'Z'|'_');
 
-fragment
-DIGIT : '0'..'9';
+//EOL : '\r' '\n' | '\n' | '\r';
+THROUGH: '::';
+COL : ':';
+SCOL : ';';
+ASSIGN : '=';
+OPAR : '(';
+CPAR : ')';
+OBRACE : '{';
+CBRACE : '}';
+OSQR : '[';
+CSQR : ']';
+DQUOTE : '"';
+ARROW : '->';
+COMMA :',';
 
+FOR : 'for';
+IN : 'in';
+BREAK : 'break';
+IF : 'if';
+ELIF : 'elif';
+ELSE : 'else';
+WHILE : 'while';
 
-LineComment : '//' ~[\r\n]* -> skip;
+TRUE : 'true';
+FALSE : 'false';
+NIL : 'nil';
+PRINT : 'print';
+DEBUG : 'debug';
+
+ID
+ : [a-zA-Z_] [a-zA-Z_0-9]*
+ ;
+
+INT
+ : [0-9]+
+ ;
+
+FLOAT
+ : [0-9]+ '.' [0-9]*
+ | '.' [0-9]+
+ ;
+
+STRING
+ : DQUOTE ( ~["\r\n] | '""')* DQUOTE
+ ;
+
+COMMENT
+ : '//' ~[\r\n]* -> skip
+ ;
+
+SPACE
+ : [ \t\r\n] -> skip
+ ;
+
+OTHER
+ : .
+ ;
