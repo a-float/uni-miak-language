@@ -102,7 +102,7 @@ atom
  | NIL                          #nilAtom
  ;
 
-TYPE: ('int' | 'float' | 'string');
+TYPE: ('int' | 'float' | 'string'| 'bool');
 OR : 'or';
 AND : 'and';
 EQ : '==';
