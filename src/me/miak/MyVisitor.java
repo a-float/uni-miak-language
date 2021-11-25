@@ -27,10 +27,10 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitOutStat(LangParser.OutStatContext ctx) {
         String data = visit(ctx.expr()).getValue().toString();
-        if(ctx.PRINT() != null) System.out.println(data);
-        else if(ctx.DEBUG() != null) System.out.println(data);
+        if (ctx.PRINT() != null) System.out.println(data);
+        else if (ctx.DEBUG() != null) System.out.println(data);
         else throw new UnsupportedOperationException("Invalid out operation");
-        return null;
+        return new Value(null);
     }
 
     @Override
@@ -41,14 +41,15 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitAssignment(LangParser.AssignmentContext ctx) {
         String id = ctx.ID().getText();
+        Value newValue;
         if (variables.containsKey(id)) {
             Value oldValue = variables.get(id);
-            Value newValue = visit(ctx.expr());
+            newValue = visit(ctx.expr());
             if (oldValue.getClass().equals(newValue.getClass())) {
                 variables.put(id, newValue);
             } else throw new RuntimeException("Invalid assignment type for variable " + id);
         } else throw new RuntimeException(id + " is not defined");
-        return null;
+        return newValue;
     }
 
     @Override
@@ -59,7 +60,7 @@ public class MyVisitor extends LangBaseVisitor<Value> {
         if (!variables.containsKey(id)) {
             variables.put(id, defaultValue);
         } else throw new RuntimeException("Variable " + id + " already defined");
-        return null;
+        return defaultValue;
     }
 
     @Override
@@ -73,12 +74,19 @@ public class MyVisitor extends LangBaseVisitor<Value> {
                 variables.put(id, value);
             } else throw new RuntimeException("Type error. Tried to assign " + value.getValue() + " to type " + type);
         } else throw new RuntimeException("Variable " + id + " already defined");
-        return null;
+        return value;
     }
 
     @Override
     public Value visitIfStat(LangParser.IfStatContext ctx) {
-        return super.visitIfStat(ctx);
+        for (LangParser.ConditionBlockContext condBlockCtx : ctx.conditionBlock()) {
+            if (visit(condBlockCtx.expr()).getBool()) {
+                visit(condBlockCtx.statBlock());
+                return new Value(null);
+            }
+        }
+        visit(ctx.statBlock());
+        return new Value(null);
     }
 
     @Override
@@ -93,7 +101,8 @@ public class MyVisitor extends LangBaseVisitor<Value> {
 
     @Override
     public Value visitWhileStat(LangParser.WhileStatContext ctx) {
-        return super.visitWhileStat(ctx);
+        while (visit(ctx.expr()).getBool()) visit(ctx.statBlock());
+        return new Value(null);
     }
 
     @Override
@@ -133,6 +142,11 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     }
 
     @Override
+    public Value visitParExpr(LangParser.ParExprContext ctx) {
+        return visit(ctx.expr());
+    }
+
+    @Override
     public Value visitAdditiveExpr(LangParser.AdditiveExprContext ctx) {
         Value left = visit(ctx.expr(0));
         Value right = visit(ctx.expr(1));
@@ -149,14 +163,20 @@ public class MyVisitor extends LangBaseVisitor<Value> {
 
     @Override
     public Value visitRelationalExpr(LangParser.RelationalExprContext ctx) {
-        return super.visitRelationalExpr(ctx);
+        Value left = visit(ctx.expr(0));
+        Value right = visit(ctx.expr(1));
+        if (ctx.LT() != null) return left.lessThan(right);
+        else if (ctx.GT() != null) return left.lessThan(right).not();
+        else if (ctx.LTEQ() != null) return left.lessOrEqualThan(right);
+        else return left.moreOrEqualThan(right);
     }
 
     @Override
     public Value visitEqualityExpr(LangParser.EqualityExprContext ctx) {
         Value left = visit(ctx.expr(0));
         Value right = visit(ctx.expr(1));
-        return left.equal(right);
+        if (ctx.EQ() != null) return left.equal(right);
+        else return left.equal(right).not();
     }
 
     @Override
@@ -196,7 +216,7 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitIdAtom(LangParser.IdAtomContext ctx) {
         String id = ctx.ID().getText();
-        if(variables.containsKey(id)){
+        if (variables.containsKey(id)) {
             return variables.get(id);
         } else throw new RuntimeException(id + " is not defined");
     }
@@ -204,12 +224,12 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitStringAtom(LangParser.StringAtomContext ctx) {
         String string = ctx.STRING().getText();
-        return new StringValue(string.substring(1, string.length()-1));
+        return new StringValue(string.substring(1, string.length() - 1));
     }
 
     @Override
     public Value visitNilAtom(LangParser.NilAtomContext ctx) {
-        return null;
+        return new Value(null);
     }
 
 }

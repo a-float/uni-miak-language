@@ -1,0 +1,35 @@
+print "Test <";
+int a = 2;
+while a < 7{
+    print a;
+    a = a + 2;
+}
+
+print "Test ==";
+int b = 3;
+while b == 3{
+    b = 5;
+}
+print "left the loop";
+print b;
+
+print "Test <=";
+int c = 4;
+while c <= 8{
+    c = c + 2;
+    print c;
+}
+
+print "Test >=";
+int d = 9;
+while d >= 2{
+    d = d / 2;
+    print d;
+}
+
+print "Test >";
+int e = 10;
+while e > 5{
+    e = e - 1;
+    print e;
+}

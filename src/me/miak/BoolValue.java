@@ -5,6 +5,10 @@ public class BoolValue extends Value{
         super(value);
     }
 
+    public Boolean getBool(){
+        return (boolean)this.getValue();
+    }
+
     @Override
     public Value and(Value other){
         if(other instanceof BoolValue){

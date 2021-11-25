@@ -20,6 +20,10 @@ public class Value {
         return value;
     }
 
+    public Boolean getBool() {
+        return this.getValue() != null;
+    }
+
     public BoolValue equal(Value other) {
         if (other == null) return new BoolValue(false);
         return new BoolValue(this.getValue() == other.getValue());
@@ -45,23 +49,35 @@ public class Value {
         throw new UnsupportedOperationException();
     }
 
-    public Value mod(Value right) {
+    public Value mod(Value other) {
         throw new UnsupportedOperationException();
     }
 
-    public Value div(Value right) {
+    public Value div(Value other) {
         throw new UnsupportedOperationException();
     }
 
-    public Value and(Value right) {
+    public Value and(Value other) {
         throw new UnsupportedOperationException();
     }
 
-    public Value or(Value right) {
+    public Value or(Value other) {
         throw new UnsupportedOperationException();
     }
 
     public Value not() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Value lessThan(Value other) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Value lessOrEqualThan(Value other) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Value moreOrEqualThan(Value other) {
         throw new UnsupportedOperationException();
     }
 }

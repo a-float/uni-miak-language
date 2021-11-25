@@ -39,5 +39,3 @@ int fun1 = (int a, int b) -> a + b;
 int fun2 = (int a, int b) -> {
     a = 23 + b;
 }
-
-

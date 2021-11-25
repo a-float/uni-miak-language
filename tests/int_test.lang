@@ -1,0 +1,15 @@
+int a = 2 + 2; // 4
+print a;
+a = 2 - 2;      // 0
+print a;
+a = 2 * 3;      // 6
+print a;
+a = 3 ^ 4;      // 81
+print a;
+a = 12 % 5;     // 2
+print a;
+a = 10 / 3;     // 3
+print a;
+a = - 7;        // -7
+print a;
+print a * 2 + 3 ^ 4;
