@@ -3,11 +3,12 @@ package me.miak;
 import me.miak.parser.LangBaseVisitor;
 import me.miak.parser.LangParser;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class MyVisitor extends LangBaseVisitor<Value> {
 
-    final HashMap<String, Value> variables = new HashMap<>();
+//    final HashMap<String, Value> variables = new HashMap<>();
+    final ContextManager contextManager = new ContextManager();
 
     @Override
     public Value visitFunDefinition(LangParser.FunDefinitionContext ctx) {
@@ -21,7 +22,12 @@ public class MyVisitor extends LangBaseVisitor<Value> {
 
     @Override
     public Value visitIterable(LangParser.IterableContext ctx) {
-        return super.visitIterable(ctx);
+        if(ctx.ID() != null){
+            return contextManager.get(ctx.ID().getText());
+        }
+        else{
+            return visit(ctx.range());
+        }
     }
 
     @Override
@@ -41,40 +47,23 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitAssignment(LangParser.AssignmentContext ctx) {
         String id = ctx.ID().getText();
-        Value newValue;
-        if (variables.containsKey(id)) {
-            Value oldValue = variables.get(id);
-            newValue = visit(ctx.expr());
-            if (oldValue.getClass().equals(newValue.getClass())) {
-                variables.put(id, newValue);
-            } else throw new RuntimeException("Invalid assignment type for variable " + id);
-        } else throw new RuntimeException(id + " is not defined");
-        return newValue;
+        Value newValue = visit(ctx.expr());
+        return contextManager.assign(id, newValue);
     }
 
     @Override
     public Value visitDeclaration(LangParser.DeclarationContext ctx) {
         String id = ctx.ID().getText();
         String type = ctx.TYPE().getText();
-        Value defaultValue = Value.getDefaultValueFromType(type);
-        if (!variables.containsKey(id)) {
-            variables.put(id, defaultValue);
-        } else throw new RuntimeException("Variable " + id + " already defined");
-        return defaultValue;
+        return contextManager.declare(type, id, null);
     }
 
     @Override
     public Value visitDeclarationWithAssignment(LangParser.DeclarationWithAssignmentContext ctx) {
         String id = ctx.ID().getText();
         String type = ctx.TYPE().getText();
-        Value defaultValue = Value.getDefaultValueFromType(type);
         Value value = visit(ctx.expr());
-        if (value.getClass().equals(defaultValue.getClass())) {
-            if (!variables.containsKey(id)) {
-                variables.put(id, value);
-            } else throw new RuntimeException("Type error. Tried to assign " + value.getValue() + " to type " + type);
-        } else throw new RuntimeException("Variable " + id + " already defined");
-        return value;
+        return contextManager.declare(type, id, value);
     }
 
     @Override
@@ -107,7 +96,19 @@ public class MyVisitor extends LangBaseVisitor<Value> {
 
     @Override
     public Value visitForStat(LangParser.ForStatContext ctx) {
-        return super.visitForStat(ctx);
+        String type = ctx.TYPE().getText();
+        String id = ctx.ID().getText();
+        IterableValue iterable = (IterableValue) visit(ctx.iterable());
+        contextManager.pushContext();
+        contextManager.declare(type, id, iterable.getStart());
+        Value nextRes = iterable.next();
+        while(!(nextRes instanceof BoolValue)){
+            visit(ctx.statBlock());
+            contextManager.assign(id, nextRes);
+            nextRes = iterable.next();
+        }
+        contextManager.popContext();
+        return new Value(null);
     }
 
     @Override
@@ -198,7 +199,16 @@ public class MyVisitor extends LangBaseVisitor<Value> {
 
     @Override
     public Value visitRange(LangParser.RangeContext ctx) {
-        return super.visitRange(ctx);
+        Value start = visit(ctx.expr(0));
+        Value stop = visit(ctx.expr(1));
+        Value step = ctx.expr(2) != null ? visit(ctx.expr(2)) : null;
+        IterableValue iterable;
+        if(step == null) {
+            iterable = new IterableValue((IntValue) start, (IntValue) stop);
+        } else {
+            iterable = new IterableValue((IntValue) start, (IntValue) stop, (IntValue) step);
+        }
+        return iterable;
     }
 
     @Override
@@ -216,9 +226,7 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitIdAtom(LangParser.IdAtomContext ctx) {
         String id = ctx.ID().getText();
-        if (variables.containsKey(id)) {
-            return variables.get(id);
-        } else throw new RuntimeException(id + " is not defined");
+        return contextManager.get(id);
     }
 
     @Override

@@ -11,9 +11,17 @@ public class IntValue extends Value {
     }
 
     @Override
+    public Value getCopy() {
+        return new IntValue((int) this.getValue());
+    }
+
+    @Override
     public Value add(Value other) {
         if (other instanceof IntValue) {
             return new IntValue((int) this.getValue() + (int) other.getValue());
+        }
+        else if (other instanceof StringValue) {
+            return new StringValue(this.getValue().toString() + other.getValue().toString());
         }
         throw new RuntimeException("Invalid addition between IntValues");
     }

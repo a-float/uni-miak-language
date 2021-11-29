@@ -33,8 +33,6 @@ funArgs
  | TYPE ID (COMMA TYPE ID)*
  ;
 
-iterable : ID | range;
-
 outStat: comm=(DEBUG | PRINT) expr SCOL;
 
 macro: HASH ID;
@@ -72,6 +70,8 @@ forStat
  : FOR OPAR TYPE ID IN iterable CPAR statBlock
  ;
 
+iterable : ID | range;
+
 expr
  :<assoc=right> expr POW expr           #powExpr
  | MINUS expr                           #unaryMinusExpr
@@ -92,7 +92,7 @@ index
  | range    #indexRange
  ;
 
-range : expr THROUGH expr;
+range : expr THROUGH expr (THROUGH expr)?;
 
 atom
  : (INT | FLOAT)                #numberAtom

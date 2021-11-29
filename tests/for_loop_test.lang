@@ -1,0 +1,7 @@
+for(int i in 1::3){
+    for(int j in 1::3){
+        for(int k in 1::3){
+            print i + " " + j + " " + k;
+        }
+    }
+}

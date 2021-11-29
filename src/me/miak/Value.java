@@ -20,6 +20,8 @@ public class Value {
         return value;
     }
 
+    public Value getCopy() {return new Value(this.getValue());}
+
     public Boolean getBool() {
         return this.getValue() != null;
     }
