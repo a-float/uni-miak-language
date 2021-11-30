@@ -1,26 +1,52 @@
-package me.miak;
+package me.miak.vals;
 
-public class Value {
-    final Object value;
+import me.miak.MyVisitor;
+import org.antlr.v4.runtime.misc.Triple;
 
-    public Value(Object value) {
+import java.util.List;
+
+public abstract class Value {
+    final private Object value;
+    final private Type type;
+
+    public Value(Type type, Object value) {
+        this.type = type;
         this.value = value;
     }
 
-    public static Value getDefaultValueFromType(String type) {
+    public static Value getDefaultValueFromType(Type type) {
         return switch (type) {
-            case "int" -> new IntValue(0);
-            case "bool" -> new BoolValue(false);
-            default -> throw new IllegalArgumentException("Unknown type: " + type);
-
+            case INT -> new IntValue(0);
+            case BOOL -> new BoolValue(false);
+            case STRING -> new StringValue("");
+            default -> throw new IllegalArgumentException("No default value for type: " + type);
         };
     }
 
     public Object getValue() {
-        return value;
+        return this.value;
     }
 
-    public Value getCopy() {return new Value(this.getValue());}
+    public Type getType() {
+        return this.type;
+    }
+
+    public Value getCopy() {
+        // no point in cloning a null
+        Value toReturn;
+        switch (this.getType()) {
+            case NULL -> toReturn = this;
+            case INT -> toReturn = new IntValue((int) this.getValue());
+            case STRING -> toReturn = new StringValue(this.getValue().toString());
+            case BOOL -> toReturn = new BoolValue((boolean) this.getValue());
+            case ITERABLE -> {
+                Triple<Value, Value, Value> data = (Triple<Value, Value, Value>) this.getValue();
+                toReturn = new IterableValue(data.a, data.b, data.c);
+            }
+            default -> throw new IllegalArgumentException("No copy defined for " + this.getType());
+        }
+        return toReturn;
+    }
 
     public Boolean getBool() {
         return this.getValue() != null;
@@ -81,5 +107,13 @@ public class Value {
 
     public Value moreOrEqualThan(Value other) {
         throw new UnsupportedOperationException();
+    }
+
+    public Value call(MyVisitor visitor, List<Value> callArgs){
+        throw new UnsupportedOperationException();
+    }
+
+    public String getString(){
+        return this.getValue().toString();
     }
 }

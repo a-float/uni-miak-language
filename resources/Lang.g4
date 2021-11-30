@@ -22,15 +22,26 @@ stat
  | outStat
  | whileStat
  | forStat
+ | funCall SCOL
+ | returnStat
  | BREAK SCOL
  | OTHER {System.err.println("unknown char: " + $OTHER.text);}
  ;
 
-funDefinition: TYPE ID ASSIGN OPAR funArgs? CPAR ARROW (statBlock | expr SCOL);
+returnStat: RETURN expr SCOL;
 
-funArgs
+funDefinition: TYPE ID ASSIGN OPAR funDefinitionArgs? CPAR ARROW (statBlock | expr SCOL);
+
+funDefinitionArgs
  : TYPE ID
  | TYPE ID (COMMA TYPE ID)*
+ ;
+
+funCall : ID OPAR funArgs? CPAR;
+
+funArgs
+ : expr
+ | expr (COMMA expr)*
  ;
 
 outStat: comm=(DEBUG | PRINT) expr SCOL;
@@ -84,6 +95,7 @@ expr
  | expr OR expr                         #orExpr
  | OPAR expr CPAR                       #parExpr
  | expr OSQR index CSQR                 #indexedExpr
+ | funCall                              #funExpr
  | atom                                 #atomExpr
  ;
 
@@ -135,6 +147,7 @@ CSQR : ']';
 DQUOTE : '"';
 ARROW : '->';
 COMMA :',';
+RETURN : 'ret';
 
 FOR : 'for';
 IN : 'in';

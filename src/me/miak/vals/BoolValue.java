@@ -1,8 +1,8 @@
-package me.miak;
+package me.miak.vals;
 
 public class BoolValue extends Value {
     public BoolValue(Boolean value) {
-        super(value);
+        super(Type.BOOL, value);
     }
 
     public Boolean getBool() {
@@ -16,14 +16,14 @@ public class BoolValue extends Value {
 
     @Override
     public Value and(Value other) {
-        if (other instanceof BoolValue) {
+        if (other.getType() == Type.BOOL) {
             return new BoolValue((boolean) this.getValue() && (boolean) other.getValue());
         } else throw new UnsupportedOperationException("and operation between not booleans");
     }
 
     @Override
     public Value or(Value other) {
-        if (other instanceof BoolValue) {
+        if (other.getType() == Type.BOOL) {
             return new BoolValue((boolean) this.getValue() || (boolean) other.getValue());
         } else throw new UnsupportedOperationException("or operation between not booleans");
     }

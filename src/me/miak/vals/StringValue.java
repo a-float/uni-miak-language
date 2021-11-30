@@ -1,8 +1,8 @@
-package me.miak;
+package me.miak.vals;
 
 public class StringValue extends Value {
     public StringValue(String value){
-        super(value);
+        super(Type.STRING, value);
     }
 
     public Boolean getBool(){
