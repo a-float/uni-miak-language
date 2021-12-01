@@ -5,6 +5,8 @@ import me.miak.parser.LangParser;
 import me.miak.vals.*;
 import org.antlr.v4.runtime.misc.Pair;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,11 @@ public class MyVisitor extends LangBaseVisitor<Value> {
 
     public final ContextManager contextManager = new ContextManager();
     public boolean isReturningFromFunction = false;
+    private final Writer outWriter;
+    public MyVisitor(Writer outStream){
+        super();
+        this.outWriter = outStream;
+    }
 
     @Override
     public Value visitFunDefinition(LangParser.FunDefinitionContext ctx) {
@@ -53,9 +60,14 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitOutStat(LangParser.OutStatContext ctx) {
         String data = visit(ctx.expr()).getString();
-        if (ctx.PRINT() != null) System.out.println(data);
-        else if (ctx.DEBUG() != null) System.out.println(data);
-        else throw new UnsupportedOperationException("Invalid out operation");
+        try {
+            if (ctx.PRINT() != null) this.outWriter.write(data+"\n");
+            else if (ctx.DEBUG() != null) this.outWriter.write(data+"\n");
+            else throw new UnsupportedOperationException("Invalid out operation");
+        } catch(IOException e){
+            System.out.println("Could not print/debug to out stream");
+            e.printStackTrace();
+        }
         return NullValue.getInstance();
     }
 
@@ -94,7 +106,8 @@ public class MyVisitor extends LangBaseVisitor<Value> {
                 return visit(condBlockCtx.statBlock());
             }
         }
-        return visit(ctx.statBlock());
+        if(ctx.statBlock() != null) return visit(ctx.statBlock());
+        return NullValue.getInstance();
     }
 
     @Override
@@ -132,8 +145,11 @@ public class MyVisitor extends LangBaseVisitor<Value> {
 
     @Override
     public Value visitWhileStat(LangParser.WhileStatContext ctx) {
-        while (visit(ctx.expr()).getBool()) visit(ctx.statBlock());
-        return NullValue.getInstance();
+        Value toReturn = NullValue.getInstance();
+        while (visit(ctx.expr()).getBool() && !this.isReturningFromFunction){
+            toReturn = visit(ctx.statBlock());
+        }
+        return toReturn;
     }
 
     @Override
@@ -144,8 +160,9 @@ public class MyVisitor extends LangBaseVisitor<Value> {
         contextManager.pushContext();
         contextManager.declare(type, id, iterable.getStart());
         Value nextRes = iterable.next();
-        while (nextRes.getType() != Type.BOOL) {
-            visit(ctx.statBlock());
+        Value toReturn = NullValue.getInstance();
+        while (nextRes.getType() != Type.BOOL && !this.isReturningFromFunction) {
+            toReturn = visit(ctx.statBlock());
             contextManager.assign(id, nextRes);
             nextRes = iterable.next();
         }

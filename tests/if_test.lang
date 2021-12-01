@@ -3,18 +3,18 @@ if not b {
     print "not b is true";
 }
 else {
-    print "not b is false";
+    print "not b is false";     /// not b is false
 }
 
 if -2 {
-    print "2 is true";
+    print "-2 is true";
 }
 elif "" {
     print "empty string is true";
 }
 elif (3-2) * (-1) {
-    print "3-2 is true";
+    print "2-3 is true";
 }
 else {
-    print "HELLO FROM THE ELSE BLOCK";
+    print "HELLO FROM THE ELSE BLOCK";  /// HELLO FROM THE ELSE BLOCK
 }

@@ -1,17 +1,23 @@
 int sum = (int a, int b) -> a + b;
 
 int fib = (int n) -> {
-    if n == 0 or n == 1{
-        ret n;
-    }
-    else {
-        ret sum(fib(n-1), fib(n-2));
+    while true{
+        if n == 0 or n == 1{
+            ret n;
+        }
+        else {
+            ret sum(fib(n-1), fib(n-2));
+        }
     }
 }
 
-for(int i in 1::sum(6,0)*2){
+for(int i in 1::sum(2,0)*2){
     print "fib(" + i + ") is " + fib(i);
 }
-print "Done!";
 
-// no type checking :c
+/// fib(1) is 1
+/// fib(2) is 1
+/// fib(3) is 2
+/// fib(4) is 3
+
+print "Done!";  /// Done!

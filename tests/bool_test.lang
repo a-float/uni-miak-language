@@ -1,21 +1,21 @@
 bool b = true;
-print b;
-print true and false;
-print true and true;
-print false and false;
-print true or false;
-print false or false;
+print b;                    /// true
+print true and false;       /// false
+print true and true;        /// true
+print false and false;      /// false
+print true or false;        /// true
+print false or false;       /// false
 
-print 1 < 2;
-print 2 > 1;
+print 1 < 2;    /// true
+print 2 > 1;    /// true
 
-print 1 <= 1;
-print 1 <= 2;
-print 1 <= 0;
+print 1 <= 1;   /// true
+print 1 <= 2;   /// true
+print 1 <= 0;   /// false
 
-print 2 >= 3;
-print 3 >= 2;
-print 2 == 2;
+print 2 >= 3;   /// false
+print 3 >= 2;   /// true
+print 2 == 2;   /// true
 
-print 2 == 3;
-print 2 == 2;
+print 2 == 3;   /// false
+print 2 == 2;   /// true
