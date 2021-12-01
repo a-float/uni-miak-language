@@ -2,14 +2,14 @@ package me.miak.vals;
 
 import org.antlr.v4.runtime.misc.Triple;
 
-public class IterableValue extends Value {
+public class RangeValue extends Value {
     private final Value stop;
     private final boolean goingUp;
     private Value start;
     private Value step;
     private boolean isFinished = false;
 
-    public IterableValue(Value start, Value stop, Value step) {
+    public RangeValue(Value start, Value stop, Value step) {
         super(Type.ITERABLE, new Triple<>(start, stop, step));
         if (start.getType() != Type.INT || stop.getType() != Type.INT || step.getType() != Type.INT) {
             throw new IllegalArgumentException("Invalid range arguments: not INTS");
@@ -25,7 +25,7 @@ public class IterableValue extends Value {
         }
     }
 
-    public IterableValue(Value start, Value stop) {
+    public RangeValue(Value start, Value stop) {
         super(Type.ITERABLE, null);
         if (start.getType() != Type.INT || stop.getType() != Type.INT) {
             throw new IllegalArgumentException("Invalid range arguments: not INTS");

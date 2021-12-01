@@ -41,7 +41,7 @@ public abstract class Value {
             case BOOL -> toReturn = new BoolValue((boolean) this.getValue());
             case ITERABLE -> {
                 Triple<Value, Value, Value> data = (Triple<Value, Value, Value>) this.getValue();
-                toReturn = new IterableValue(data.a, data.b, data.c);
+                toReturn = new RangeValue(data.a, data.b, data.c);
             }
             default -> throw new IllegalArgumentException("No copy defined for " + this.getType());
         }

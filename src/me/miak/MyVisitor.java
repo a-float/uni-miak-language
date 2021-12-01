@@ -156,7 +156,7 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     public Value visitForStat(LangParser.ForStatContext ctx) {
         String type = ctx.TYPE().getText();
         String id = ctx.ID().getText();
-        IterableValue iterable = (IterableValue) visit(ctx.iterable());
+        RangeValue iterable = (RangeValue) visit(ctx.iterable());
         contextManager.pushContext();
         contextManager.declare(type, id, iterable.getStart());
         Value nextRes = iterable.next();
@@ -261,11 +261,11 @@ public class MyVisitor extends LangBaseVisitor<Value> {
         Value start = visit(ctx.expr(0));
         Value stop = visit(ctx.expr(1));
         Value step = ctx.expr(2) != null ? visit(ctx.expr(2)) : null;
-        IterableValue iterable;
+        RangeValue iterable;
         if (step == null) {
-            iterable = new IterableValue(start, stop);
+            iterable = new RangeValue(start, stop);
         } else {
-            iterable = new IterableValue(start, stop, step);
+            iterable = new RangeValue(start, stop, step);
         }
         return iterable;
     }
