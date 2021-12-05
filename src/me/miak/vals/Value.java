@@ -14,8 +14,6 @@ public abstract class Value {
         this.value = value;
     }
 
-    public boolean isFunction() { return false; }
-
     public Object getValue() {
         return this.value;
     }
