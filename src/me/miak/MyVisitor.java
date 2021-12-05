@@ -22,17 +22,23 @@ public class MyVisitor extends LangBaseVisitor<Value> {
 
     @Override
     public Value visitFunDefinition(LangParser.FunDefinitionContext ctx) {
-        String type = ctx.TYPE().getText();
         String id = ctx.ID().getText();
-        List<Pair<Type, String>> args = new ArrayList<>();
+        List<String> args = new ArrayList<>();
         LangParser.FunDefinitionArgsContext actx = ctx.funDefinitionArgs();
-        for (int i = 0; i < actx.TYPE().size(); i++) {
-            Pair<Type, String> arg = new Pair<>(Type.stringToType(actx.TYPE(i).getText()), actx.ID(i).getText());
-            args.add(arg);
+        if(actx != null) {
+            for (int i = 0; i < actx.ID().size(); i++) {
+                String arg = actx.ID(i).getText();
+                args.add(arg);
+            }
         }
         Value fun = new FunctionValue(args, ctx.expr() != null ? ctx.expr() : ctx.statBlock());
-        contextManager.declare(type, id, fun);
+        contextManager.declare(id, visit(ctx.type()).getBool(), fun);
         return NullValue.getInstance();
+    }
+
+    @Override
+    public Value visitType(LangParser.TypeContext ctx) {
+        return new BoolValue(ctx.CONST() != null);
     }
 
     @Override
@@ -72,11 +78,6 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     }
 
     @Override
-    public Value visitMacro(LangParser.MacroContext ctx) {
-        return super.visitMacro(ctx);
-    }
-
-    @Override
     public Value visitAssignment(LangParser.AssignmentContext ctx) {
         String id = ctx.ID().getText();
         Value newValue = visit(ctx.expr());
@@ -86,33 +87,44 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitDeclaration(LangParser.DeclarationContext ctx) {
         String id = ctx.ID().getText();
-        String type = ctx.TYPE().getText();
-        Value defaultValue = contextManager.declare(type, id, null);
+        contextManager.declare(id, visit(ctx.type()).getBool(), null);
         return NullValue.getInstance();
     }
 
     @Override
     public Value visitDeclarationWithAssignment(LangParser.DeclarationWithAssignmentContext ctx) {
         String id = ctx.ID().getText();
-        String type = ctx.TYPE().getText();
         Value value = visit(ctx.expr());
-        return contextManager.declare(type, id, value); // returns assigned value
+        return contextManager.declare(id, visit(ctx.type()).getBool(), value); // returns assigned value
     }
 
     @Override
     public Value visitIfStat(LangParser.IfStatContext ctx) {
         for (LangParser.ConditionBlockContext condBlockCtx : ctx.conditionBlock()) {
             if (visit(condBlockCtx.expr()).getBool()) {
-                return visit(condBlockCtx.statBlock());
+                contextManager.pushContext();
+                Value toReturn = visit(condBlockCtx.statBlock());
+                contextManager.popContext();
+                return toReturn;
             }
         }
-        if(ctx.statBlock() != null) return visit(ctx.statBlock());
+        if(ctx.statBlock() != null) {
+            contextManager.pushContext();
+            Value toReturn = visit(ctx.statBlock());
+            contextManager.popContext();
+            return toReturn;
+        }
         return NullValue.getInstance();
     }
 
     @Override
     public Value visitConditionBlock(LangParser.ConditionBlockContext ctx) {
         return visit(ctx.statBlock());
+    }
+
+    @Override
+    public Value visitParse(LangParser.ParseContext ctx){
+        return visit(ctx.block());
     }
 
     @Override
@@ -146,19 +158,20 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     @Override
     public Value visitWhileStat(LangParser.WhileStatContext ctx) {
         Value toReturn = NullValue.getInstance();
+        contextManager.pushContext();
         while (visit(ctx.expr()).getBool() && !this.isReturningFromFunction){
             toReturn = visit(ctx.statBlock());
         }
+        contextManager.popContext();
         return toReturn;
     }
 
     @Override
     public Value visitForStat(LangParser.ForStatContext ctx) {
-        String type = ctx.TYPE().getText();
         String id = ctx.ID().getText();
         RangeValue iterable = (RangeValue) visit(ctx.iterable());
         contextManager.pushContext();
-        contextManager.declare(type, id, iterable.getStart());
+        contextManager.declare(id, false, iterable.getStart());
         Value nextRes = iterable.next();
         Value toReturn = NullValue.getInstance();
         while (nextRes.getType() != Type.BOOL && !this.isReturningFromFunction) {
@@ -167,7 +180,7 @@ public class MyVisitor extends LangBaseVisitor<Value> {
             nextRes = iterable.next();
         }
         contextManager.popContext();
-        return NullValue.getInstance();
+        return toReturn;
     }
 
     @Override

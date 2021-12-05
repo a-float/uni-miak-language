@@ -1,4 +1,4 @@
-bool b = true;
+let b = true;
 print b;                    /// true
 print true and false;       /// false
 print true and true;        /// true

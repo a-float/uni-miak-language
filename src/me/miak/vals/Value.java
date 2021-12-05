@@ -14,14 +14,7 @@ public abstract class Value {
         this.value = value;
     }
 
-    public static Value getDefaultValueFromType(Type type) {
-        return switch (type) {
-            case INT -> new IntValue(0);
-            case BOOL -> new BoolValue(false);
-            case STRING -> new StringValue("");
-            default -> throw new IllegalArgumentException("No default value for type: " + type);
-        };
-    }
+    public boolean isFunction() { return false; }
 
     public Object getValue() {
         return this.value;
@@ -31,8 +24,8 @@ public abstract class Value {
         return this.type;
     }
 
+    // TODO test and possibly fix getCopy method
     public Value getCopy() {
-        // no point in cloning a null
         Value toReturn;
         switch (this.getType()) {
             case NULL -> toReturn = this;
@@ -54,7 +47,7 @@ public abstract class Value {
 
     public BoolValue equal(Value other) {
         if (other == null) return new BoolValue(false);
-        return new BoolValue(this.getValue() == other.getValue());
+        return new BoolValue(this.getValue().equals(other.getValue()));
     }
 
     public Value add(Value other) {

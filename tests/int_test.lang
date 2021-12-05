@@ -1,4 +1,4 @@
-int a = 2 + 2;
+let a = 2 + 2;
 print a;        /// 4
 a = 2 - 2;
 print a;        /// 0

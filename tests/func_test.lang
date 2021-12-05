@@ -1,6 +1,6 @@
-int sum = (int a, int b) -> a + b;
+let sum = (a, b) -> a + b;
 
-int fib = (int n) -> {
+let fib = n -> {
     while true{
         if n == 0 or n == 1{
             ret n;
@@ -11,7 +11,7 @@ int fib = (int n) -> {
     }
 }
 
-for(int i in 1::sum(2,0)*2){
+for i in 1::sum(2,0)*2{
     print "fib(" + i + ") is " + fib(i);
 }
 
@@ -21,3 +21,13 @@ for(int i in 1::sum(2,0)*2){
 /// fib(4) is 3
 
 print "Done!";  /// Done!
+
+let for_test = a -> {
+    for i in 1::5{
+        if "name " + i == "name 3"{
+            ret i;
+        }
+    }
+}
+
+print for_test("3"); /// 3

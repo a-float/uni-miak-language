@@ -1,4 +1,4 @@
-int a = 3;
+let a = 3;
 while a > 0{
     print a;
     a = a - 1;
@@ -8,8 +8,8 @@ while a > 0{
 /// 1
 /// 0
 
-bool loop = true;
-int counter = 1;
+let loop = true;
+let counter = 1;
 while loop {
     print "in a loop " + counter;
     counter = counter + 1;

@@ -12,7 +12,7 @@ public class RangeValue extends Value {
     public RangeValue(Value start, Value stop, Value step) {
         super(Type.ITERABLE, new Triple<>(start, stop, step));
         if (start.getType() != Type.INT || stop.getType() != Type.INT || step.getType() != Type.INT) {
-            throw new IllegalArgumentException("Invalid range arguments: not INTS");
+            throw new IllegalArgumentException("Invalid range arguments: not integers");
         }
         this.start = start;
         this.stop = stop;

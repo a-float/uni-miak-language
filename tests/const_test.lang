@@ -1,0 +1,8 @@
+let a = 2;
+a = 5;
+
+const abc = 12;
+print abc; /// 12
+
+abc = abc + 1;
+print abc; /// Tried to change the value of a constant variable abc

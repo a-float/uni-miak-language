@@ -1,1 +1,7 @@
-print "This is a main function!";
+bool a = 123;
+for(int a in 1::2){
+    print 2;
+}
+
+let fun = () -> 12;
+

@@ -1,4 +1,4 @@
-bool b = true;
+let b = true;
 if not b {
     print "not b is true";
 }

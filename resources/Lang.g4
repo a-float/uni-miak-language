@@ -14,7 +14,6 @@ block
 
 stat
  : assignment
- | macro
  | funDefinition
  | declaration
  | declarationWithAssignment
@@ -30,11 +29,11 @@ stat
 
 returnStat: RETURN expr SCOL;
 
-funDefinition: TYPE ID ASSIGN OPAR funDefinitionArgs? CPAR ARROW (statBlock | expr SCOL);
+funDefinition: type ID ASSIGN funDefinitionArgs? ARROW (statBlock | expr SCOL);
 
 funDefinitionArgs
- : TYPE ID
- | TYPE ID (COMMA TYPE ID)*
+ : ID
+ | OPAR ID (COMMA ID)* CPAR
  ;
 
 funCall : ID OPAR funArgs? CPAR;
@@ -46,18 +45,16 @@ funArgs
 
 outStat: comm=(DEBUG | PRINT) expr SCOL;
 
-macro: HASH ID;
-
 assignment
  : ID ASSIGN expr SCOL
  ;
 
 declaration
- : TYPE ID SCOL
+ : type ID SCOL
  ;
 
 declarationWithAssignment
- : TYPE ID ASSIGN expr SCOL
+ : type ID ASSIGN expr SCOL
  ;
 
 ifStat
@@ -78,7 +75,7 @@ whileStat
  ;
 
 forStat
- : FOR OPAR TYPE ID IN iterable CPAR statBlock
+ : FOR ID IN iterable statBlock
  ;
 
 iterable : ID | range;
@@ -114,7 +111,10 @@ atom
  | NIL                          #nilAtom
  ;
 
-TYPE: ('int' | 'float' | 'string'| 'bool');
+type: CONST | VAR;
+
+CONST : 'const';
+VAR : 'let';
 OR : 'or';
 AND : 'and';
 EQ : '==';

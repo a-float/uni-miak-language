@@ -32,7 +32,12 @@ public class Tester {
             CharStream inStream = CharStreams.fromString(input);
             OutputStream outStream = new ByteArrayOutputStream();
             BufferedWriter outWriter = new BufferedWriter(new OutputStreamWriter(outStream));
-            Main.runParser(inStream, outWriter);
+            try {
+                Main.runParser(inStream, outWriter);
+            }
+            catch (Exception e){
+                outWriter.write(e.getMessage()+'\n');
+            }
             outWriter.flush();
             String result = outStream.toString();
             if(Objects.equals(result, expected.toString())) System.out.println("Passed ✔️\n");
