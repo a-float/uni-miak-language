@@ -40,7 +40,7 @@ public class Tester {
             }
             outWriter.flush();
             String result = outStream.toString();
-            if(Objects.equals(result, expected.toString())) System.out.println("Passed ✔️\n");
+            if(Objects.equals(result, expected.toString())) System.out.print("Passed!\n\n");
             else{
                 hasFailedTest = true;
                 System.out.println("Failed:");
@@ -48,7 +48,7 @@ public class Tester {
                 System.out.println("Got:\n" + result);
             }
         }
-        if(!hasFailedTest) System.out.println("\uD83C\uDFC6 All test passed \uD83C\uDFC6");
+        if(!hasFailedTest) System.out.println("All test passed!");
     }
 
     private static Set<String> getDirFilenames(String dir) {

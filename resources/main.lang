@@ -1,6 +1,7 @@
 let a = 123;
-let fun = () -> 12;
+let hello = () -> "Hello";
+const world = () -> "World!";
 
-for a in 1::2{
-    print fun();
+for a in 1::1{
+    print hello() + " " + world();
 }

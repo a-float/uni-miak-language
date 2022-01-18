@@ -23,7 +23,6 @@ stat
  | forStat
  | funCall SCOL
  | returnStat
- | BREAK SCOL
  | OTHER {System.err.println("unknown char: " + $OTHER.text);}
  ;
 
@@ -152,7 +151,6 @@ RETURN : 'ret';
 
 FOR : 'for';
 IN : 'in';
-BREAK : 'break';
 IF : 'if';
 ELIF : 'elif';
 ELSE : 'else';
