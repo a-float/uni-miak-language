@@ -10,11 +10,6 @@ public class BoolValue extends Value {
     }
 
     @Override
-    public Value getCopy() {
-        return new BoolValue((boolean) this.getValue());
-    }
-
-    @Override
     public Value and(Value other) {
         if (other.getType() == Type.BOOL) {
             return new BoolValue((boolean) this.getValue() && (boolean) other.getValue());

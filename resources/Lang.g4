@@ -34,6 +34,7 @@ funDefinition: type ID ASSIGN funDefinitionArgs? ARROW (statBlock | expr SCOL);
 funDefinitionArgs
  : ID
  | OPAR ID (COMMA ID)* CPAR
+ | OPAR CPAR
  ;
 
 funCall : ID OPAR funArgs? CPAR;

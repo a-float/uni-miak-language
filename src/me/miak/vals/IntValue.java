@@ -11,11 +11,6 @@ public class IntValue extends Value {
     }
 
     @Override
-    public Value getCopy() {
-        return new IntValue((int) this.getValue());
-    }
-
-    @Override
     public Value add(Value other) {
         if (other.getType() == Type.INT) {
             return new IntValue((int) this.getValue() + (int) other.getValue());

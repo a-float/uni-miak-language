@@ -1,12 +1,7 @@
 package me.miak.vals;
 
-import me.miak.ContextManager;
 import me.miak.MyVisitor;
-import me.miak.parser.LangParser;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.Pair;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionValue extends Value {
@@ -20,8 +15,8 @@ public class FunctionValue extends Value {
         this.body = body;
     }
 
-    @Override
-    public boolean isFunction() { return true; }
+//    @Override
+//    public boolean isFunction() { return true; }
 
     @Override
     public Value call(MyVisitor visitor, List<Value> callArgs){

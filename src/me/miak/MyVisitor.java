@@ -48,8 +48,10 @@ public class MyVisitor extends LangBaseVisitor<Value> {
         if (fun.getType() != Type.FUNC) throw new RuntimeException("Variable " + id + " is not a function");
         List<Value> args = new ArrayList<>();
         LangParser.FunArgsContext actx = ctx.funArgs();
-        for (int i = 0; i < actx.expr().size(); i++) {
-            args.add(visit(actx.expr(i)));
+        if(actx != null) {
+            for (int i = 0; i < actx.expr().size(); i++) {
+                args.add(visit(actx.expr(i)));
+            }
         }
         return fun.call(this, args);
     }

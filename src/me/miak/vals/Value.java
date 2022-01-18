@@ -22,23 +22,6 @@ public abstract class Value {
         return this.type;
     }
 
-    // TODO test and possibly fix getCopy method
-    public Value getCopy() {
-        Value toReturn;
-        switch (this.getType()) {
-            case NULL -> toReturn = this;
-            case INT -> toReturn = new IntValue((int) this.getValue());
-            case STRING -> toReturn = new StringValue(this.getValue().toString());
-            case BOOL -> toReturn = new BoolValue((boolean) this.getValue());
-            case ITERABLE -> {
-                Triple<Value, Value, Value> data = (Triple<Value, Value, Value>) this.getValue();
-                toReturn = new RangeValue(data.a, data.b, data.c);
-            }
-            default -> throw new IllegalArgumentException("No copy defined for " + this.getType());
-        }
-        return toReturn;
-    }
-
     public Boolean getBool() {
         return this.getValue() != null;
     }
