@@ -4,6 +4,23 @@ const getWorl = letter -> {
     ret "Worl" + letter;
 }
 
-print getHello() + " " + getWorl("d");
+print getHello() + " " + getWorl("d");  // Hello World
+print 4 + 5 * 2 + 3;    // 17
 
+let fac_r = n -> {
+    if n == 0 or n == 1{
+        ret 1;
+    } else{
+        ret n*fac_r(n-1);
+    }
+}
+let fac_i = n -> {
+    let res = 1;
+    for i in 1::n {
+        res = res * i;
+    }
+    ret res;
+}
 
+print "Recursive " + fac_r(5);  // 120
+print "Iterative " + fac_i(5);  // 120
