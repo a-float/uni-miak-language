@@ -1,5 +1,6 @@
 let b = true;
 print b;                    /// true
+print not b;                /// false
 print true and false;       /// false
 print true and true;        /// true
 print false and false;      /// false

@@ -310,7 +310,7 @@ public class MyVisitor extends LangBaseVisitor<Value> {
     }
 
     @Override
-    public Value visitNilAtom(LangParser.NilAtomContext ctx) {
+    public Value visitNullAtom(LangParser.NullAtomContext ctx) {
         return NullValue.getInstance();
     }
 

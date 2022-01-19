@@ -13,4 +13,7 @@ public class StringValue extends Value {
     public Value add(Value other) {
         return new StringValue(this.getValue().toString() + other.getValue().toString());
     }
+
+    @Override
+    public BoolValue not(){ return new BoolValue(!this.getBool());}
 }

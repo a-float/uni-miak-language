@@ -108,7 +108,7 @@ atom
  | (TRUE | FALSE)               #booleanAtom
  | ID                           #idAtom
  | STRING                       #stringAtom
- | NIL                          #nilAtom
+ | NULL                         #nullAtom
  ;
 
 type: CONST | VAR;
@@ -158,7 +158,7 @@ WHILE : 'while';
 
 TRUE : 'true';
 FALSE : 'false';
-NIL : 'nil';
+NULL : 'null';
 PRINT : 'print';
 DEBUG : 'debug';
 

@@ -1,7 +1,9 @@
-let a = 123;
-let hello = () -> "Hello";
-const world = () -> "World!";
+const getHello = () -> "Hello";
 
-for a in 1::1{
-    print hello() + " " + world();
+const getWorl = letter -> {
+    ret "Worl" + letter;
 }
+
+print getHello() + " " + getWorl("d");
+
+

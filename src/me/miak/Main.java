@@ -18,14 +18,13 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String file = args.length == 1 ? args[0] : "./resources/main.lang";
-        String input = args.length == 2 ? args[1] : null;
+        String file = args.length == 1 ? args[0] : null;
         CharStream inputStream;
-        if (input == null) {
-            inputStream = CharStreams.fromFileName(file);
-        } else {
-            inputStream = CharStreams.fromString(input);
+        if (file == null) {
+            System.out.println("No source file specified");
+            return;
         }
+        inputStream = CharStreams.fromFileName(file);
 //        System.out.println(inputStream);
         runParser(inputStream, new BufferedWriter(new OutputStreamWriter(System.out)));
     }
